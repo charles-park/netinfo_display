@@ -58,7 +58,7 @@ typedef union i2clcd__u {
 #define	DEFAULT_LCD_HEIGHT	2
 #define DEFAULT_LCD_BL      1
 
-#define	DEFAULT_I2C_DELAY	200	// usleep(100)
+#define	DEFAULT_I2C_DELAY	100	// usleep(100)
 #define	LCD_CMD				0
 #define	LCD_DAT				1
 #define	LCD_BL_OFF			0

@@ -21,8 +21,10 @@
 #include <linux/fb.h>
 #include <getopt.h>
 
+#include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include "i2c-lcd.h"
+#include "i2c-ctl.h"
 #include "typedefs.h"
 //------------------------------------------------------------------------------
 /* ----------------------------------------------------------------------- *
@@ -58,6 +60,8 @@
 //------------------------------------------------------------------------------
 static 	int		i2c_send        (int fd, bool d_type, bool bl,
 									byte_t *sdata, int size, int udelay);
+static int 		i2c_write 		(int fd, bool d_type, bool bl,
+									byte_t *sdata, int size, int udelay);
 static 	int		lcd_goto_xy		(int fd, int x, int y);
 		int		lcd_printf      (int fd, int x, int y, char *fmt, ...);
 		int  	lcd_clear       (int fd, int line);
@@ -73,7 +77,9 @@ static int 	LCDHeight 	= DEFAULT_LCD_HEIGHT;
 static bool	LCDBL 		= DEFAULT_LCD_BL;
 
 //------------------------------------------------------------------------------
-static int i2c_send (int fd, bool d_type, bool bl,
+// i2c file write
+//------------------------------------------------------------------------------
+static int i2c_write (int fd, bool d_type, bool bl,
 							byte_t *sdata, int size, int udelay)
 {
 	i2clcd_u ldata;
@@ -104,6 +110,45 @@ static int i2c_send (int fd, bool d_type, bool bl,
 
 	if (iflag)	return ((s_cnt / 2) == size) ? true : false;
 	else		return ((s_cnt / 4) == size) ? true : false;
+}
+
+//------------------------------------------------------------------------------
+// i2c smbus write
+//------------------------------------------------------------------------------
+static int i2c_send (int fd, bool d_type, bool bl,
+							byte_t *sdata, int size, int udelay)
+{
+	i2clcd_u ldata;
+	int s_cnt, i, ret;
+	bool iflag = (size == 0) ? true : false;
+	byte_t sbuf[64];
+
+	memset(sbuf, 0, sizeof(sbuf));
+	// startup command parsing
+	if (iflag)	size = 1;
+
+	ldata.bits.bl = bl;	ldata.bits.rs = d_type;	ldata.bits.rw = 0;
+	for (i = 0, s_cnt = 0; i < size; i++) {
+		ldata.bits.dat = (sdata[i] >> 4) & 0x0F;
+		ldata.bits.e   = 1;	sbuf[s_cnt++]  = ldata.byte;
+		ldata.bits.e   = 0;	sbuf[s_cnt++]  = ldata.byte;
+		// lcd startup command.
+		if (iflag)	break;
+
+		ldata.bits.dat = (sdata[i]     ) & 0x0F;
+		ldata.bits.e   = 1;	sbuf[s_cnt++] = ldata.byte;
+		ldata.bits.e   = 0;	sbuf[s_cnt++] = ldata.byte;
+	}
+	if (s_cnt > 32) {
+		ret  = i2c_smbus_write_block_data(fd, 0,         32, &sbuf[0]);
+		ret += i2c_smbus_write_block_data(fd, 0, s_cnt - 32, &sbuf[32]);
+	}
+	else
+		ret = i2c_smbus_write_block_data(fd, 0, s_cnt -  0, &sbuf[0]);
+
+	usleep(udelay);		usleep(DEFAULT_I2C_DELAY);
+
+	return	ret ? false : true;
 }
 
 //------------------------------------------------------------------------------
