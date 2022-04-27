@@ -355,8 +355,9 @@ int main(int argc, char **argv)
 		memset (my_net_ip, 0, sizeof(my_net_ip));
 		memset (net_link,  0, sizeof(net_link));
 		speed = 0;
+		lcd_clr(fd, -1);
 		if (get_net_info ("eth0", my_net_ip, &speed, net_link)) {
-			lcd_puts (fd, 0, 0, "IP %s", my_net_ip);
+			lcd_puts (fd, 0, 0, "%s", my_net_ip);
 			lcd_puts (fd, 0, 1, "Speed=%d, %s", speed, net_link);
 		} else {
 			lcd_puts (fd, 0, 0, "Network Error! ");
