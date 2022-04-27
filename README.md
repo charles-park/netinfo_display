@@ -5,7 +5,7 @@ Net Info LCD Display.
 
 LCD Shield는 wiringPi를 사용하여 구현. I2C LCD는 직접 Control방식으로 구현.
 
-wiringPi package : apt install libwiringpi-dev, odroid-wiringpi
+wiringPi package : apt install libwiringpi-dev, odroid-wiringpi, libgpiod-dev
 
 필요 package : build-essential, i2c-tools, ethtool, screen, vim, git, nmap
 

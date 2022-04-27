@@ -4,7 +4,7 @@ CFLAGS  += -D__DEBUG__
 
 INCLUDE = -I/usr/local/include
 LDFLAGS = -L/usr/local/lib -lpthread
-LDLIBS  = -lwiringPi -lwiringPiDev -lpthread -lm -lrt -lcrypt
+LDLIBS  = -lwiringPi -lwiringPiDev -lpthread -lm -lrt -lcrypt -lgpiod
 
 # 폴더이름으로 실행파일 생성
 TARGET  := $(notdir $(shell pwd))
