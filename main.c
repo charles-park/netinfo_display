@@ -259,7 +259,6 @@ static int system_init(void)
 	pinMode (PORT_LED5, OUTPUT);	digitalWrite(PORT_LED5, 0);
 	pinMode (PORT_LED6, OUTPUT);	digitalWrite(PORT_LED6, 0);
 	pinMode (PORT_LED7, OUTPUT);	digitalWrite(PORT_LED7, 0);
-	fprintf(stdout, "fd = %d\n", fd);
 	return  fd;
 }
  

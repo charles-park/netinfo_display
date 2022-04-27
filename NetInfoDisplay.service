@@ -13,10 +13,12 @@ After=syslog.target
 Type=simple
 
 # login의 user를 입력한다. root계정의 경우 root로 입력한다.
-User=odroid
+# User=odroid
+User=root
 
 # github에서 내려 받은 폴더를 기록하도록 한다.
-WorkingDirectory=/home/odroid/netinfo_display
+# WorkingDirectory=/home/odroid/netinfo_display
+WorkingDirectory=/root/netinfo_display
 
 # apt install screen package가 설치되어있어야 한다.
 # Network으로 접속시 확인하기 위하여 screen -ls 명령을 사용할 수 있다.
