@@ -4,7 +4,8 @@ CFLAGS  += -D__DEBUG__
 
 INCLUDE = -I/usr/local/include
 LDFLAGS = -L/usr/local/lib -lpthread
-LDLIBS  = -lwiringPi -lwiringPiDev -lpthread -lm -lrt -lcrypt -lgpiod
+# LDLIBS  = -lwiringPi -lwiringPiDev -lpthread -lm -lrt -lcrypt -lgpiod
+LDLIBS  = $$(pkg-config --cflags --libs libwiringpi2)
 
 # 폴더이름으로 실행파일 생성
 TARGET  := $(notdir $(shell pwd))
@@ -20,10 +21,10 @@ OBJS     = $(SRCS:.c=.o)
 all : $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	$(CC) -o $@ $^ $(LDLIBS)
 
 %.o: %.c
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(LDLIBS)
 
 clean :
 	rm -f $(OBJS)
