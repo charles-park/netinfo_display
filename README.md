@@ -5,9 +5,9 @@ Net Info LCD Display.
 
 LCD Shield는 wiringPi를 사용하여 구현. I2C LCD는 직접 Control방식으로 구현.
 
-wiringPi package : apt install libwiringpi-dev, odroid-wiringpi, libgpiod-dev
+wiringPi package : https://wiki.odroid.com/odroid-c4/application_note/gpio/wiringpi#tab__ubuntu_ppa
 
-필요 package : build-essential, i2c-tools, ethtool, screen, vim, git, nmap
+필요 package : build-essential, i2c-tools, ethtool, screen, vim, git, nmap, autoconf, libtool
 
 ODROID에서 판매하는 제품 16x2 LCD Shield 또는 I2C LCD를 사용할 수 있도록 구현함.
 
