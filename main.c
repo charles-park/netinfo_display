@@ -63,6 +63,8 @@ struct ethtool_cmd {
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+static int is_net_alive		(void);
+
 static void tolowerstr 		(char *p);
 static void toupperstr 		(char *p);
 static void print_usage		(const char *prog);
@@ -78,6 +80,26 @@ static void time_display 	(int fd, int toffset);
 //------------------------------------------------------------------------------
 int (*lcd_puts)(int fd, int x, int y, char *fmt, ...);
 int (*lcd_clr) (int fd, int line);
+
+//------------------------------------------------------------------------------
+static int is_net_alive(void)
+{
+	char buf[2048];
+	FILE *fp;
+
+	if ((fp = popen("ping 8.8.8.8  -c 1 -w 1 2<&1", "r")) != NULL) {
+		while (fgets(buf, 2048, fp)) {
+			if (NULL != strstr(buf, "1 received")) {
+				pclose(fp);
+				fprintf(stdout, "%s = true\n", __func__);
+				return 1;
+			}
+		}
+		pclose(fp);
+	}
+	fprintf(stdout, "%s = false\n", __func__);
+	return 0;
+}
 
 //------------------------------------------------------------------------------
 static void tolowerstr (char *p)
@@ -103,17 +125,17 @@ static void print_usage(const char *prog)
 	printf("Usage: %s [-DawhItd]\n", prog);
 	puts("  -D --device        device name. (default /dev/i2c-0).\n"
 		 "  -a --i2c_addr      i2c chip address. (default 0x3f).\n"
-	     "  -w --width         lcd width.(default w = 16)\n"
-	     "  -h --height        lcd height.(default h = 2)\n"
-	     "  -t --time_offset   Display current time & time offset.(default false)\n"
-	     "  -d --delay         Display Switching delay (time & net info, default = 1)\n"
+		 "  -w --width         lcd width.(default w = 16)\n"
+		 "  -h --height        lcd height.(default h = 2)\n"
+		 "  -t --time_offset   Display current time & time offset.(default false)\n"
+		 "  -d --delay         Display Switching delay (time & net info, default = 1)\n"
 	);
 	exit(1);
 }
 
 //------------------------------------------------------------------------------
-static char 	*OPT_DEVICE_NAME = "/dev/i2c-0";
-static char 	OPT_WIDTH = 16, OPT_HEIGHT = 2;
+static char		*OPT_DEVICE_NAME = "/dev/i2c-0";
+static char		OPT_WIDTH = 16, OPT_HEIGHT = 2;
 static uchar_t	OPT_DEVICE_ADDR = 0x3f;
 static bool		OPT_LCD_SHIELD = true, OPT_TIME_DISPLAY = false;;
 static int 		OPT_TIME_OFFSET = 0, OPT_DISPLAY_DELAY = 1;
@@ -277,14 +299,14 @@ static int lcd_clear_line (int fd, int line)
 //------------------------------------------------------------------------------
 static int lcd_put_line (int fd, int x, int y, char *fmt, ...)
 {
-    char buf[OPT_WIDTH +1], len, i;
-    va_list va;
+	char buf[OPT_WIDTH +1], len, i;
+	va_list va;
 
-    memset(buf, 0x00, sizeof(buf));
+	memset(buf, 0x00, sizeof(buf));
 
-    va_start(va, fmt);
-    len = vsprintf(buf, fmt, va);
-    va_end(va);
+	va_start(va, fmt);
+	len = vsprintf(buf, fmt, va);
+	va_end(va);
 
 	lcdPosition (fd, x, y);
 
@@ -317,16 +339,16 @@ static void time_display (int fd, int toffset)
 //------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-	int fd, speed;
+	int fd, speed = 0, net_alive = 0;
 	char my_net_ip[17], net_link[5];
 
-    parse_opts(argc, argv);
+	parse_opts(argc, argv);
 
 	// 16x2 IO Shield Used
 	if (OPT_LCD_SHIELD) {
-		
+
 		wiringPiSetup();
-	
+
 		if ((fd = system_init() < 0)) {
 			fprintf (stderr, "%s: System Init failed\n", __func__);
 			return 0;
@@ -352,11 +374,17 @@ int main(int argc, char **argv)
 	}
 
 	while (true) {
-		memset (my_net_ip, 0, sizeof(my_net_ip));
-		memset (net_link,  0, sizeof(net_link));
-		speed = 0;
+		if (net_alive)
+			net_alive = is_net_alive();
+		else {
+			speed = 0;
+			memset (my_net_ip, 0, sizeof(my_net_ip));
+			memset (net_link,  0, sizeof(net_link));
+			net_alive = get_net_info ("eth0", my_net_ip, &speed, net_link);
+		}
+
 		lcd_clr(fd, -1);
-		if (get_net_info ("eth0", my_net_ip, &speed, net_link)) {
+		if (net_alive) {
 			lcd_puts (fd, 0, 0, "%s", my_net_ip);
 			lcd_puts (fd, 0, 1, "Speed=%d, %s", speed, net_link);
 		} else {
