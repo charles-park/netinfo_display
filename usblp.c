@@ -51,7 +51,6 @@ const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
 	"^CFC\n",
 	"^FO310,25\n",
 	"^FDLabel Printer Test^FS\n",
-	"^FDforum.odroid.com >^FS\n",
 	"^FO316,55\n",
 	"^FD00:1E:06:xx:xx:xx^FS\n",
 	"^XZ\n"
@@ -177,6 +176,7 @@ static void test_usblp_device (int8_t *lpname)
 		fprintf (stdout, "%s : couuld not create file for usblp test. ", __func__);
 		return;
 	}
+#if 0
 	if (strstr (lpname, "EPL") != NULL) {
 		lines = sizeof (USBLP_EPL_FORM) / sizeof (USBLP_EPL_FORM[0]);
 		form = USBLP_EPL_FORM[0];
@@ -184,6 +184,9 @@ static void test_usblp_device (int8_t *lpname)
 		lines = sizeof (USBLP_ZPL_FORM) / sizeof (USBLP_ZPL_FORM[0]);
 		form = USBLP_ZPL_FORM[0];
 	}
+#endif
+	lines = sizeof (USBLP_EPL_FORM) / sizeof (USBLP_EPL_FORM[0]);
+	form = USBLP_EPL_FORM[0];
 
 	for (i = 0; i < lines; i++, form += TEXT_WIDTH)
 		fputs (form, fp);
