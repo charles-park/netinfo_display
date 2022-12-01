@@ -31,6 +31,7 @@
 //------------------------------------------------------------------------------
 #include "typedefs.h"
 #include "i2c-lcd.h"
+#include "usblp.h"
 
 //------------------------------------------------------------------------------
 // for WiringPi
@@ -373,6 +374,9 @@ int main(int argc, char **argv)
 		lcd_clr  = lcd_clear;
 	}
 
+	// usb label printer search & setup
+	usblp_reconfig ();
+
 	while (true) {
 		if (net_alive)
 			net_alive = is_net_alive();
@@ -396,6 +400,13 @@ int main(int argc, char **argv)
 		if (OPT_TIME_DISPLAY) {
 			time_display (fd, OPT_TIME_OFFSET);
 			sleep(OPT_DISPLAY_DELAY);
+		}
+
+		if (!digitalRead(PORT_BUTTON1) || !digitalRead(PORT_BUTTON2)) {
+			lcd_clr(fd, -1);
+			lcd_puts (fd, 0, 0, "Reconfigure    ");
+			lcd_puts (fd, 0, 1, "  Label Printer");
+			usblp_reconfig();
 		}
 	}
 	return 0;
