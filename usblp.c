@@ -47,7 +47,7 @@ const int8_t USBLP_EPL_FORM[][TEXT_WIDTH] = {
 };
 
 const int8_t USBLP_ZPL_INIT[TEXT_WIDTH] = {
-	"~JC^XA^JUF^XZ\n"
+	"^XA^JUF^XZ\n"
 };
 
 const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
@@ -255,6 +255,7 @@ int32_t usblp_reconfig (void)
 		// factory setup
 		init_zpl_device ();
 		zpl_init = 1;
+		sleep(5);
 	}
 	fprintf (stdout, "*** USB Label Printer setup is complete. ***\n");
 	fprintf (stdout, "*** Printer Device Name : %s\n", usblp_device);
