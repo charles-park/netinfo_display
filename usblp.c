@@ -47,14 +47,30 @@ const int8_t USBLP_EPL_FORM[][TEXT_WIDTH] = {
 };
 
 const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
-	"^XA^SZ2^XZ\n",
-	"^XA\n"
+	"I8,0,001\n",
+	"Q78,16\n",
+	"q240\n",
+	"rN\n",
+	"S4\n",
+	"D15\n",
+	"ZB\n",
+	"JF\n",
+	"O\n",
+	"R304,10\n",
+	"f100\n",
+	"N\n",
+	"A10,0,0,2,1,1,N,\"ZPL Printer Test\"\n",
+	"A16,32,0,2,1,1,N,\"00:1E:06:xx:xx:xx\"\n",
+	"P1\n"
+#if 0
+// Disable ZPL command.
+	"^XA\n",
 	"^CFC\n",
-	"^FO310,25\n",
-	"^FDZPL Printer Test^FS\n",
-	"^FO316,55\n",
-	"^FD00:1E:06:xx:xx:xx^FS\n",
+	"^LH0,0\n",
+	"^FO310,25^FDZPL Printer Test^FS\n",
+	"^FO316,55^FD00:1E:06:xx:xx:xx^FS\n",
 	"^XZ\n"
+#endif
 };
 
 //------------------------------------------------------------------------------
