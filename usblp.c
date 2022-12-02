@@ -50,9 +50,9 @@ const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
 	"^XA^SZ2^XZ\n",
 	"^XA\n"
 	"^CFC\n",
-	"^FO310,25\n",
+	"^FO10,25\n",
 	"^FDZPL Printer Test^FS\n",
-	"^FO316,55\n",
+	"^FO16,55\n",
 	"^FD00:1E:06:xx:xx:xx^FS\n",
 	"^XZ\n"
 };
