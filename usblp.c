@@ -46,6 +46,24 @@ const int8_t USBLP_EPL_FORM[][TEXT_WIDTH] = {
 	"P1\n"
 };
 
+const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
+	"I8,0,001\n",
+	"Q78,16\n",
+	"q240\n",
+	"rN\n",
+	"S4\n",
+	"D15\n",
+	"ZB\n",
+	"JF\n",
+	"O\n",
+	"R304,10\n",
+	"f100\n",
+	"N\n",
+	"A10,0,0,2,1,1,N,\"ZPL Printer Test\"\n",
+	"A16,32,0,2,1,1,N,\"00:1E:06:xx:xx:xx\"\n",
+	"P1\n"
+};
+#if 0
 const int8_t USBLP_ZPL_INIT[TEXT_WIDTH] = {
 	"^XA^JUF^XZ\n"
 };
@@ -58,6 +76,7 @@ const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
 	"^FO316,55^FD00:1E:06:xx:xx:xx^FS\n",
 	"^XZ\n"
 };
+#endif
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -201,6 +220,9 @@ static void test_usblp_device (int8_t *lpname)
 }
 
 //------------------------------------------------------------------------------
+#if 0
+static int8_t zpl_init = 0;
+
 static void init_zpl_device (void)
 {
 	FILE *fp = fopen ("zpl_factory.txt", "w");
@@ -221,11 +243,11 @@ static void init_zpl_device (void)
 		pclose(fp);
 	}
 }
+#endif
 
 //------------------------------------------------------------------------------
 int32_t usblp_reconfig (void)
 {
-	static int8_t zpl_init = 0;
 	int8_t usblp_device[512];
 
 	memset (usblp_device, 0x00, sizeof(usblp_device));
@@ -241,7 +263,6 @@ int32_t usblp_reconfig (void)
 	
 	if (!confirm_usblp_device (usblp_device)) {
 		fprintf (stdout, "Error : The usblp information is different.\n");
-		zpl_init = 0;
 		if (!set_usblp_device (usblp_device)) {
 			fprintf (stdout, "Error : Failed to configure usblp.\n");
 			return 0;
@@ -251,12 +272,14 @@ int32_t usblp_reconfig (void)
 			return 0;
 		}
 	}
+	#if 0
 	if (!zpl_init && strstr (usblp_device, "ZPL") != NULL) {
 		// factory setup
 		init_zpl_device ();
 		zpl_init = 1;
 		sleep(5);
 	}
+	#endif
 	fprintf (stdout, "*** USB Label Printer setup is complete. ***\n");
 	fprintf (stdout, "*** Printer Device Name : %s\n", usblp_device);
 	test_usblp_device (usblp_device);
