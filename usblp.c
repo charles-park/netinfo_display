@@ -225,6 +225,7 @@ static void init_zpl_device (void)
 //------------------------------------------------------------------------------
 int32_t usblp_reconfig (void)
 {
+	static int8_t zpl_init = 0;
 	int8_t usblp_device[512];
 
 	memset (usblp_device, 0x00, sizeof(usblp_device));
@@ -240,6 +241,7 @@ int32_t usblp_reconfig (void)
 	
 	if (!confirm_usblp_device (usblp_device)) {
 		fprintf (stdout, "Error : The usblp information is different.\n");
+		zpl_init = 0;
 		if (!set_usblp_device (usblp_device)) {
 			fprintf (stdout, "Error : Failed to configure usblp.\n");
 			return 0;
@@ -248,10 +250,11 @@ int32_t usblp_reconfig (void)
 			fprintf (stdout, "Error : The usblp settings have not been changed.\n");
 			return 0;
 		}
-		if (strstr (usblp_device, "ZPL") != NULL) {
-			// factory setup
-			init_zpl_device ();
-		}
+	}
+	if (!zpl_init && strstr (usblp_device, "ZPL") != NULL) {
+		// factory setup
+		init_zpl_device ();
+		zpl_init = 1;
 	}
 	fprintf (stdout, "*** USB Label Printer setup is complete. ***\n");
 	fprintf (stdout, "*** Printer Device Name : %s\n", usblp_device);
