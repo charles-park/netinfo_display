@@ -406,7 +406,16 @@ int main(int argc, char **argv)
 			lcd_clr(fd, -1);
 			lcd_puts (fd, 0, 0, "Reconfigure    ");
 			lcd_puts (fd, 0, 1, "  Label Printer");
-			usblp_reconfig();
+			if (usblp_reconfig()) {
+				lcd_clr(fd, -1);
+				lcd_puts (fd, 0, 0, "Label Printer  ");
+				lcd_puts (fd, 0, 1, "Setup complete ");
+			} else {
+				lcd_clr(fd, -1);
+				lcd_puts (fd, 0, 0, "Can't found    ");
+				lcd_puts (fd, 0, 1, "  Label Printer");
+			}
+			sleep(OPT_DISPLAY_DELAY);
 		}
 	}
 	return 0;

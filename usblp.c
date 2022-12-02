@@ -199,35 +199,36 @@ static void test_usblp_device (int8_t *lpname)
 }
 
 //------------------------------------------------------------------------------
-void usblp_reconfig (void)
+int32_t usblp_reconfig (void)
 {
 	int8_t usblp_device[512];
 
 	memset (usblp_device, 0x00, sizeof(usblp_device));
 	if (!check_usblp_connection ()) {
 		fprintf (stdout, "Error : Zebra USB Label Printer not found\n");
-		return;
+		return 0;
 	}
 
 	if (!get_usblp_device (usblp_device)) {
 		fprintf (stdout, "Error : Unable to get usblp infomation.\n");
-		return;
+		return 0;
 	}
 	
 	if (!confirm_usblp_device (usblp_device)) {
 		fprintf (stdout, "Error : The usblp information is different.\n");
 		if (!set_usblp_device (usblp_device)) {
 			fprintf (stdout, "Error : Failed to configure usblp.\n");
-			return;
+			return 0;
 		}
 		if (!confirm_usblp_device (usblp_device)) {
 			fprintf (stdout, "Error : The usblp settings have not been changed.\n");
-			return;
+			return 0;
 		}
 	}
 	fprintf (stdout, "*** USB Label Printer setup is complete. ***\n");
 	fprintf (stdout, "*** Printer Device Name : %s\n", usblp_device);
 	test_usblp_device (usblp_device);
+	return 1;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

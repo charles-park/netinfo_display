@@ -9,7 +9,7 @@
 
 #include "typedefs.h"
 //------------------------------------------------------------------------------
-extern	void usblp_reconfig (void);
+extern	int32_t usblp_reconfig (void);
 
 #endif  //  #define __USBLP_H__
 //------------------------------------------------------------------------------
