@@ -41,16 +41,17 @@ const int8_t USBLP_EPL_FORM[][TEXT_WIDTH] = {
 	"R304,10\n",
 	"f100\n",
 	"N\n",
-	"A10,0,0,2,1,1,N,\"Label Printer Test\"\n",
+	"A10,0,0,2,1,1,N,\"EPL Printer Test\"\n",
 	"A16,32,0,2,1,1,N,\"00:1E:06:xx:xx:xx\"\n",
 	"P1\n"
 };
 
 const int8_t USBLP_ZPL_FORM[][TEXT_WIDTH] = {
-	"^XA\n",
+	"^XA^SZ2^XZ\n",
+	"^XA\n"
 	"^CFC\n",
 	"^FO310,25\n",
-	"^FDLabel Printer Test^FS\n",
+	"^FDZPL Printer Test^FS\n",
 	"^FO316,55\n",
 	"^FD00:1E:06:xx:xx:xx^FS\n",
 	"^XZ\n"
@@ -176,7 +177,7 @@ static void test_usblp_device (int8_t *lpname)
 		fprintf (stdout, "%s : couuld not create file for usblp test. ", __func__);
 		return;
 	}
-#if 0
+
 	if (strstr (lpname, "EPL") != NULL) {
 		lines = sizeof (USBLP_EPL_FORM) / sizeof (USBLP_EPL_FORM[0]);
 		form = USBLP_EPL_FORM[0];
@@ -184,14 +185,10 @@ static void test_usblp_device (int8_t *lpname)
 		lines = sizeof (USBLP_ZPL_FORM) / sizeof (USBLP_ZPL_FORM[0]);
 		form = USBLP_ZPL_FORM[0];
 	}
-#endif
-	lines = sizeof (USBLP_EPL_FORM) / sizeof (USBLP_EPL_FORM[0]);
-	form = USBLP_EPL_FORM[0];
 
 	for (i = 0; i < lines; i++, form += TEXT_WIDTH)
 		fputs (form, fp);
 	fclose(fp);
-	// send print lpr usblp.txt -P zebra
 
 	memset (cmd_line, 0x00, sizeof(cmd_line));
 	sprintf (cmd_line, "%s", "lpr usblp.txt -P zebra 2<&1");
