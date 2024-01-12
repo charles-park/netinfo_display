@@ -24,7 +24,7 @@ WorkingDirectory=/root/netinfo_display
 # Network으로 접속시 확인하기 위하여 screen -ls 명령을 사용할 수 있다.
 # screen -r {service no or name} 으로 터미널 상태를 확인 할 수 있으며
 # 터미널 상태확인 중 종료는 Ctrl + c, screen 상태만 종료시 Ctrl + a,d (detect)로 사용한다.
-ExecStart=/bin/bash ./NetInfoDisplay.sh
+ExecStart=/bin/bash ./service/NetInfoDisplay.sh
 ExecStartPre=/bin/sleep 5
 
 [Install]
